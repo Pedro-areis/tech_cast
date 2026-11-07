@@ -7,15 +7,16 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 ## Estado atual
 
 - **Atualizado em:** 2026-11-07
-- **Última sessão:** blueprint do projeto (`CLAUDE.md`, `PROJECT.md`, `TASKS.md`, `FEASIBILITY.md`) e página local do backlog em `backlog-page/`. Nada commitado ainda.
+- **Última sessão:** projeto movido do OneDrive (`/mnt/c/...`) para dentro do WSL, em `~/projetos/tech_cast`, para evitar a lentidão do `/mnt/c` e o OneDrive sincronizando `.venv` e banco. O dono vai apagar a cópia antiga. Banco decidido (D8): SQLite, registrado no ADR 0001.
 - **Em andamento:** nada. Nenhum código da aplicação foi escrito.
-- **Bloqueios:** aprovação da Fase 0 e das sugestões D1 a D7. Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
-- **Próximo passo:** o dono commita os documentos e as alterações das skills (o agente não faz commits neste projeto) e aprova a Fase 0.
+- **Bloqueios:** nenhum para a Fase 0. D1 a D7 ainda pendentes (necessárias a partir da Fase 3). Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
+- **Próximo passo:** o dono commita o ADR 0001 e o TASKS.md. Depois, começar a Fase 0 pela instalação do `uv` (ainda não instalado no WSL; o Python do sistema é 3.14, e o `uv` baixa o 3.12). Na configuração do Alembic, ligar `render_as_batch=True` (ver ADR 0001).
 
 ## Concluído
 
 - [x] Especificação inicial e análise de viabilidade (`docs/FEASIBILITY.md`)
 - [x] Documentos de base: `.claude/CLAUDE.md`, `docs/PROJECT.md`, `docs/TASKS.md`
+- [x] D8. Banco de dados: SQLite com SQLAlchemy e Alembic ([ADR 0001](adr/0001-banco-de-dados.md))
 
 ## Decisões pendentes
 
