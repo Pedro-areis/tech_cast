@@ -11,7 +11,10 @@ Responda ao usuário em <idioma>.
 
 Leia antes de trabalhar:
 - [docs/PROJECT.md](../docs/PROJECT.md): o problema, os requisitos e as definições do domínio.
-- [docs/TASKS.md](../docs/TASKS.md): fases, tarefas, decisões pendentes. Atualize ao concluir cada tarefa.
+- [docs/TASKS.md](../docs/TASKS.md): fases, tarefas, decisões pendentes. Atualize ao concluir cada tarefa. Comece a sessão pela seção "Estado atual".
+
+## Troca de bastão
+Ao terminar uma tarefa, ou antes de encerrar uma sessão com trabalho pela metade, reescreva a seção "Estado atual" do `docs/TASKS.md` (última sessão, em andamento, bloqueios, próximo passo). Preferências e decisões que o dono do projeto deu só na conversa e ainda não viraram ADR ou regra deste arquivo também entram lá, em "Bloqueios" ou "Próximo passo". Motivo: outra pessoa ou outro agente precisa continuar sem o histórico da conversa.
 
 ## Regras de trabalho (definidas pelo dono do projeto)
 <Numeradas, cada uma com o motivo. Inclua as preferências padrão do autor da skill, salvo instrução contrária, e qualquer regra que o usuário tenha pedido.>

@@ -5,7 +5,7 @@ O parser é simples de propósito. Ele reconhece só estes elementos:
 | Elemento | Sintaxe | Como aparece na página |
 |---|---|---|
 | Título do documento | `# Título` (primeira linha `#`) | Título da página |
-| Seção comum | `## Nome` sem emoji | Coluna lateral. "Decisões pendentes" ganha destaque; "Concluído" vem em seguida |
+| Seção comum | `## Nome` sem emoji | Coluna lateral, nesta ordem: "Estado atual" (destaque na cor de acento, para a troca de bastão), "Decisões pendentes" (destaque de alerta), "Concluído" e as demais |
 | Fase | `## ⬜ Fase N: nome`, `## 🔄 …` ou `## ✅ …` | Cartão com status, barra de progresso e checklist |
 | Tarefa | `- [ ] texto` ou `- [x] texto` | Item de checklist |
 | Item comum | `- texto` | Lista com marcadores |

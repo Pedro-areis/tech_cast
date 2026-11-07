@@ -74,7 +74,7 @@ Crie ou atualize os arquivos abaixo seguindo os modelos em `references/`. Escrev
 |---|---|---|
 | `.claude/CLAUDE.md` | Regras para agentes: forma de trabalho, comandos, convenções e regras técnicas obrigatórias deste projeto | [references/claude-md.md](references/claude-md.md) |
 | `docs/PROJECT.md` | Problema, público, requisitos com status, definição dos indicadores e escopo | [references/project-md.md](references/project-md.md) |
-| `docs/TASKS.md` | Decisões pendentes, fases com tarefas e critérios de aceite | [references/tasks-md.md](references/tasks-md.md) |
+| `docs/TASKS.md` | Estado atual (troca de bastão), decisões pendentes, fases com tarefas e critérios de aceite | [references/tasks-md.md](references/tasks-md.md) |
 | `docs/DIAGNOSIS.md` | Só em projeto existente: o diagnóstico datado, como registro do ponto de partida | [references/report.md](references/report.md) |
 
 **Por que `.claude/CLAUDE.md`:** o Claude Code lê automaticamente o `CLAUDE.md` da raiz ou de `.claude/` em toda sessão. Um `docs/CLAUDE.md` só seria lido quando o agente abrisse arquivos em `docs/`. Se o projeto já tiver um `CLAUDE.md` na raiz, mantenha-o lá.
@@ -123,6 +123,7 @@ Ao terminar:
 - Os documentos criados ou atualizados.
 - O relatório na conversa.
 - Uma linha sobre o que foi executado durante o diagnóstico e o que foi limpo depois.
+- A seção "Estado atual" do `docs/TASKS.md` preenchida, para que outra pessoa ou outro agente possa continuar sem o histórico da conversa.
 - O pedido de aprovação da primeira fase.
 
 O `docs/TASKS.md` segue um formato que a skill `backlog-page` sabe transformar em página visual. Se o usuário gostar de acompanhar o progresso visualmente, mencione essa skill.

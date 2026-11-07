@@ -1,6 +1,6 @@
 // Gera <pasta deste script>/backlog.html a partir de docs/TASKS.md.
 // O TASKS.md é a fonte da verdade; esta página é só uma visualização.
-// Uso (na raiz do projeto): node pages_html/build-backlog.mjs [--name "Nome"] [--source docs/TASKS.md] [--out pages_html/backlog.html]
+// Uso (na raiz do projeto): node backlog-page/build-backlog.mjs [--name "Nome"] [--source docs/TASKS.md] [--out backlog-page/backlog.html]
 // Sem argumentos: lê ../docs/TASKS.md relativo ao script e usa o nome da pasta do projeto.
 
 import { readFileSync, writeFileSync } from "node:fs";
@@ -116,7 +116,8 @@ function render(doc) {
   const others = doc.sections.filter((s) => !s.status);
   const doneSection = others.find((s) => /conclu/i.test(s.heading));
   const decisions = others.find((s) => /decis/i.test(s.heading));
-  const rest = others.filter((s) => s !== doneSection && s !== decisions);
+  const stateSection = others.find((s) => /estado atual/i.test(s.heading));
+  const rest = others.filter((s) => s !== doneSection && s !== decisions && s !== stateSection);
 
   const allTasks = phases.flatMap((p) => p.tasks);
   const doneTasks = allTasks.filter((t) => t.done).length;
@@ -135,7 +136,7 @@ function render(doc) {
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Public+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: painel de backlog — resumo no topo, coluna lateral com decisões e concluídos, fases em lista à direita. */
+/* Layout: painel de backlog — resumo no topo, coluna lateral com estado atual, decisões e concluídos, fases em lista à direita. */
 :root {
   --bg: #f6f7f8; --surface: #ffffff; --fg: #16202a; --muted: #586572; --line: #d9dee3;
   --accent: #0d6b6e; --accent-soft: #e2f0f0; --warn: #8a6d00; --warn-soft: #fbf5dc;
@@ -175,6 +176,7 @@ a { color: var(--accent); }
 aside { display: grid; gap: 16px; }
 .side { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
 .side.decisions { border: 1px dashed var(--warn); background: var(--warn-soft); }
+.side.state { border-left: 4px solid var(--accent); background: var(--accent-soft); }
 .side h2 { font-family: var(--font-display); font-size: 16px; font-weight: 800; margin: 0 0 8px; }
 .phases { display: grid; gap: 12px; min-width: 0; }
 .phases > h2 { font-family: var(--font-display); font-size: 16px; font-weight: 800; margin: 0; }
@@ -211,7 +213,7 @@ footer { margin-top: 36px; font-size: 12.5px; color: var(--muted); }
   <header>
     <p class="eyebrow">${escapeHtml(projectName)} · acompanhamento</p>
     <h1>${inline(doc.title || "Tarefas")}</h1>
-    <p class="sub">Gerado a partir de <code>docs/TASKS.md</code> em ${generatedAt}. Para atualizar, edite o TASKS.md e rode <code>node pages_html/build-backlog.mjs</code>.</p>
+    <p class="sub">Gerado a partir de <code>docs/TASKS.md</code> em ${generatedAt}. Para atualizar, edite o TASKS.md e rode <code>node backlog-page/build-backlog.mjs</code>.</p>
   </header>
 
   <div class="summary">
@@ -223,6 +225,7 @@ footer { margin-top: 36px; font-size: 12.5px; color: var(--muted); }
 
   <div class="grid">
     <aside>
+      ${stateSection ? renderSideSection(stateSection, "state") : ""}
       ${decisions ? renderSideSection(decisions, "decisions") : ""}
       ${doneSection ? renderSideSection(doneSection, "done") : ""}
       ${rest.map((s) => renderSideSection(s, "")).join("")}
