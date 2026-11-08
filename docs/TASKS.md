@@ -6,12 +6,12 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 
 ## Estado atual
 
-- **Atualizado em:** 2026-11-07
-- **Última sessão:** Fase 0 implementada na branch `fase-0-fundacao` (nada commitado). `uv` instalado via `pipx`; projeto `techcast` com FastAPI (`GET /health`), `pydantic-settings`, logging JSON no stdout, SQLAlchemy + Alembic (`render_as_batch=True`, migration `0001` vazia), `ruff` e `pytest` (3 testes). Aceite verificado numa cópia limpa: `uv sync`, `pytest`, `ruff check` e `alembic upgrade head` passam; `/health` retorna 200.
-- **Em andamento:** aguardando o dono revisar e commitar a Fase 0.
+- **Atualizado em:** 2026-11-08
+- **Última sessão:** Fase 0 aceita e commitada na `main` (`bdaa807`). Sessão de revisão: o agente explicou ao dono, etapa por etapa, todo o código da Fase 0 (pyproject, config, logging, FastAPI, SQLAlchemy, Alembic, testes). Resumo da fundação: `uv` instalado via `pipx`; projeto `techcast` com FastAPI (`GET /health`), `pydantic-settings`, logging JSON no stdout, SQLAlchemy + Alembic (`render_as_batch=True`, migration `0001` vazia), `ruff` e `pytest` (3 testes). Aceite verificado numa cópia limpa: `uv sync`, `pytest`, `ruff check` e `alembic upgrade head` passam; `/health` retorna 200.
+- **Em andamento:** nada.
 - **Bloqueios:** nenhum para a Fase 1. D1 a D7 ainda pendentes (D1/D2/D6 resolvidas na Fase 1). Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
 - **Decisões de sessão:** o dono autorizou o agente a criar branches (commits e push continuam com o dono). Nesta fase, o `.env` real não existe; copie `.env.example` se quiser mudar algo.
-- **Próximo passo:** o dono valida e commita a Fase 0; depois, Fase 1 (spikes), começando pela proposta de feeds RSS (D6).
+- **Próximo passo:** Fase 1 (spikes), começando pela proposta de feeds RSS (D6) para o dono revisar. Na Fase 2, adicionar testes do banco (SQLite em memória) e de `get_session`, que a Fase 0 não cobre.
 
 ## Concluído
 
@@ -29,7 +29,7 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 - [ ] D6. Lista inicial de feeds RSS (pt-BR e inglês). Sugestão: proposta na Fase 1 para você revisar. Necessária na Fase 3.
 - [ ] D7. Cadastrar cartão no Google Cloud (TTS) e na Oracle (hospedagem). Sugestão: sim, com alerta de orçamento em US$ 1; se não, Piper/edge-tts e outra hospedagem. Necessária nas Fases 5 e 9.
 
-## ✅ Fase 0 (aguardando validação do dono): Fundação do projeto
+## ✅ Fase 0: Fundação do projeto
 
 - [x] Projeto `uv` com Python 3.12, `pyproject.toml` e pacote `src/techcast/`
 - [x] `ruff` (lint e formatação) e `pytest` configurados, com um teste de exemplo
