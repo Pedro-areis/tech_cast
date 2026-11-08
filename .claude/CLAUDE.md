@@ -53,14 +53,16 @@ docs/
 Regra de dependência: módulos de domínio não importam `web/`. Integrações externas só são acessadas através das interfaces (`NewsSource`, `LLMProvider`, `TTSProvider`, `AudioStorage`, `Distributor`).
 
 ## Comandos
-Ainda não existem. A Fase 0 cria e valida estes comandos; atualize esta seção quando estiverem funcionando.
+Validados na Fase 0 (o `uv` foi instalado com `pipx install uv`; no WSL fica em `~/.local/bin`).
 
 ```bash
 uv sync                                   # instalar dependências
 uv run pytest                             # testes
 uv run ruff check . && uv run ruff format --check .
+uv run ruff format .                      # formatar
 uv run alembic upgrade head               # aplicar migrations
-uv run fastapi dev src/techcast/web/app.py
+uv run alembic revision --autogenerate -m "msg"   # nova migration
+uv run fastapi dev src/techcast/web/app.py   # servidor de desenvolvimento; GET /health
 ```
 
 ## Regras técnicas obrigatórias

@@ -1,0 +1,40 @@
+[project]
+name = "techcast"
+version = "0.1.0"
+description = "Podcast semanal de notícias de tecnologia, gerado por IA"
+authors = [
+    { name = "Pedro Reis", email = "preis.dev@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.20.1",
+    "fastapi>=0.162.2",
+    "pydantic-settings>=2.16.2",
+    "sqlalchemy>=2.1.8",
+    "uvicorn>=0.54.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "fastapi[standard]>=0.162.2",
+    "httpx>=0.28.1",
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: chama APIs reais; fora da suíte padrão"]
+addopts = "-m 'not live'"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+extend-exclude = ["migrations/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

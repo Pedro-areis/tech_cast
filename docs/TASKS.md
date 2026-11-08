@@ -7,10 +7,11 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 ## Estado atual
 
 - **Atualizado em:** 2026-11-07
-- **Última sessão:** projeto movido do OneDrive (`/mnt/c/...`) para dentro do WSL, em `~/projetos/tech_cast`, para evitar a lentidão do `/mnt/c` e o OneDrive sincronizando `.venv` e banco. O dono vai apagar a cópia antiga. Banco decidido (D8): SQLite, registrado no ADR 0001.
-- **Em andamento:** nada. Nenhum código da aplicação foi escrito.
-- **Bloqueios:** nenhum para a Fase 0. D1 a D7 ainda pendentes (necessárias a partir da Fase 3). Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
-- **Próximo passo:** o dono commita o ADR 0001 e o TASKS.md. Depois, começar a Fase 0 pela instalação do `uv` (ainda não instalado no WSL; o Python do sistema é 3.14, e o `uv` baixa o 3.12). Na configuração do Alembic, ligar `render_as_batch=True` (ver ADR 0001).
+- **Última sessão:** Fase 0 implementada na branch `fase-0-fundacao` (nada commitado). `uv` instalado via `pipx`; projeto `techcast` com FastAPI (`GET /health`), `pydantic-settings`, logging JSON no stdout, SQLAlchemy + Alembic (`render_as_batch=True`, migration `0001` vazia), `ruff` e `pytest` (3 testes). Aceite verificado numa cópia limpa: `uv sync`, `pytest`, `ruff check` e `alembic upgrade head` passam; `/health` retorna 200.
+- **Em andamento:** aguardando o dono revisar e commitar a Fase 0.
+- **Bloqueios:** nenhum para a Fase 1. D1 a D7 ainda pendentes (D1/D2/D6 resolvidas na Fase 1). Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
+- **Decisões de sessão:** o dono autorizou o agente a criar branches (commits e push continuam com o dono). Nesta fase, o `.env` real não existe; copie `.env.example` se quiser mudar algo.
+- **Próximo passo:** o dono valida e commita a Fase 0; depois, Fase 1 (spikes), começando pela proposta de feeds RSS (D6).
 
 ## Concluído
 
@@ -28,15 +29,15 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 - [ ] D6. Lista inicial de feeds RSS (pt-BR e inglês). Sugestão: proposta na Fase 1 para você revisar. Necessária na Fase 3.
 - [ ] D7. Cadastrar cartão no Google Cloud (TTS) e na Oracle (hospedagem). Sugestão: sim, com alerta de orçamento em US$ 1; se não, Piper/edge-tts e outra hospedagem. Necessária nas Fases 5 e 9.
 
-## ⬜ Fase 0: Fundação do projeto
+## ✅ Fase 0 (aguardando validação do dono): Fundação do projeto
 
-- [ ] Projeto `uv` com Python 3.12, `pyproject.toml` e pacote `src/techcast/`
-- [ ] `ruff` (lint e formatação) e `pytest` configurados, com um teste de exemplo
-- [ ] `config.py` com `pydantic-settings` e `.env.example`; `.gitignore` com `.env`, banco, áudios e `.claude/settings.local.json`
-- [ ] Logging estruturado no stdout
-- [ ] App FastAPI mínima com `GET /health`
-- [ ] SQLAlchemy + Alembic com SQLite e uma migration inicial vazia
-- [ ] Atualizar a seção "Comandos" do `CLAUDE.md` com os comandos testados
+- [x] Projeto `uv` com Python 3.12, `pyproject.toml` e pacote `src/techcast/`
+- [x] `ruff` (lint e formatação) e `pytest` configurados, com um teste de exemplo
+- [x] `config.py` com `pydantic-settings` e `.env.example`; `.gitignore` com `.env`, banco, áudios e `.claude/settings.local.json`
+- [x] Logging estruturado no stdout
+- [x] App FastAPI mínima com `GET /health`
+- [x] SQLAlchemy + Alembic com SQLite e uma migration inicial vazia
+- [x] Atualizar a seção "Comandos" do `CLAUDE.md` com os comandos testados
 
 **Aceite:** `uv sync`, `uv run pytest`, `uv run ruff check .` e `uv run alembic upgrade head` passam numa cópia limpa do repositório; `GET /health` retorna 200.
 

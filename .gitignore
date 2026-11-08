@@ -1,2 +1,20 @@
 # Página local do backlog (derivada do docs/TASKS.md)
 backlog-page/
+
+# Python / uv
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# Segredos e configuração local
+.env
+.claude/settings.local.json
+
+# Dados locais (banco e áudios)
+data/
+*.db
+*.db-wal
+*.db-shm
+*.mp3
