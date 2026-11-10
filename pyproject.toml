@@ -25,6 +25,10 @@ dev = [
     "pytest>=9.2.0",
     "ruff>=0.17.4",
 ]
+spikes = [
+    "feedparser>=6.0.14",
+    "httpx>=0.28.1",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

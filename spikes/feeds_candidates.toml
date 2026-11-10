@@ -1,0 +1,150 @@
+# Candidate RSS feeds for the TechCast spike (D6). URLs are guesses to be validated by rss_probe.py.
+[[feed]]
+name = "Tecnoblog"
+lang = "pt"
+category = "general"
+url = "https://tecnoblog.net/feed/"
+
+[[feed]]
+name = "Canaltech"
+lang = "pt"
+category = "general"
+url = "https://canaltech.com.br/rss/"
+
+[[feed]]
+name = "Olhar Digital"
+lang = "pt"
+category = "general"
+url = "https://olhardigital.com.br/feed/"
+
+[[feed]]
+name = "Mobile Time"
+lang = "pt"
+category = "mobile"
+url = "https://www.mobiletime.com.br/feed/"
+
+[[feed]]
+name = "Convergência Digital"
+lang = "pt"
+category = "telecom"
+url = "https://convergenciadigital.com.br/feed/"
+
+[[feed]]
+name = "Tecmundo"
+lang = "pt"
+category = "general"
+url = "https://rss.tecmundo.com.br/feed"
+
+[[feed]]
+name = "Ars Technica"
+lang = "en"
+category = "general"
+url = "https://feeds.arstechnica.com/arstechnica/index"
+
+[[feed]]
+name = "The Verge"
+lang = "en"
+category = "general"
+url = "https://www.theverge.com/rss/index.xml"
+
+[[feed]]
+name = "TechCrunch"
+lang = "en"
+category = "startups"
+url = "https://techcrunch.com/feed/"
+
+[[feed]]
+name = "Wired"
+lang = "en"
+category = "general"
+url = "https://www.wired.com/feed/rss"
+
+[[feed]]
+name = "MIT Technology Review"
+lang = "en"
+category = "ai"
+url = "https://www.technologyreview.com/feed/"
+
+[[feed]]
+name = "Hacker News (front page)"
+lang = "en"
+category = "community"
+url = "https://hnrss.org/frontpage"
+
+[[feed]]
+name = "OpenAI Blog"
+lang = "en"
+category = "ai"
+url = "https://openai.com/news/rss.xml"
+
+[[feed]]
+name = "Google AI Blog"
+lang = "en"
+category = "ai"
+url = "https://blog.google/technology/ai/rss/"
+
+[[feed]]
+name = "Hugging Face Blog"
+lang = "en"
+category = "ai"
+url = "https://huggingface.co/blog/feed.xml"
+
+[[feed]]
+name = "Cloudflare Blog"
+lang = "en"
+category = "cloud"
+url = "https://blog.cloudflare.com/rss/"
+
+[[feed]]
+name = "GitHub Blog"
+lang = "en"
+category = "dev"
+url = "https://github.blog/feed/"
+
+[[feed]]
+name = "AWS News Blog"
+lang = "en"
+category = "cloud"
+url = "https://aws.amazon.com/blogs/aws/feed/"
+
+[[feed]]
+name = "Krebs on Security"
+lang = "en"
+category = "security"
+url = "https://krebsonsecurity.com/feed/"
+
+[[feed]]
+name = "BleepingComputer"
+lang = "en"
+category = "security"
+url = "https://www.bleepingcomputer.com/feed/"
+
+[[feed]]
+name = "The Hacker News"
+lang = "en"
+category = "security"
+url = "https://feeds.feedburner.com/TheHackersNews"
+
+[[feed]]
+name = "AnandTech"
+lang = "en"
+category = "hardware"
+url = "https://www.anandtech.com/rss/"
+
+[[feed]]
+name = "Tom's Hardware"
+lang = "en"
+category = "hardware"
+url = "https://www.tomshardware.com/feeds/all"
+
+[[feed]]
+name = "The Register"
+lang = "en"
+category = "enterprise"
+url = "https://www.theregister.com/headlines.atom"
+
+[[feed]]
+name = "InfoQ"
+lang = "en"
+category = "dev"
+url = "https://feed.infoq.com/"

@@ -6,12 +6,16 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 
 ## Estado atual
 
-- **Atualizado em:** 2026-11-08
-- **Última sessão:** Fase 0 aceita e commitada na `main` (`bdaa807`). Sessão de revisão: o agente explicou ao dono, etapa por etapa, todo o código da Fase 0 (pyproject, config, logging, FastAPI, SQLAlchemy, Alembic, testes). Resumo da fundação: `uv` instalado via `pipx`; projeto `techcast` com FastAPI (`GET /health`), `pydantic-settings`, logging JSON no stdout, SQLAlchemy + Alembic (`render_as_batch=True`, migration `0001` vazia), `ruff` e `pytest` (3 testes). Aceite verificado numa cópia limpa: `uv sync`, `pytest`, `ruff check` e `alembic upgrade head` passam; `/health` retorna 200.
-- **Em andamento:** nada.
-- **Bloqueios:** nenhum para a Fase 1. D1 a D7 ainda pendentes (D1/D2/D6 resolvidas na Fase 1). Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
-- **Decisões de sessão:** o dono autorizou o agente a criar branches (commits e push continuam com o dono). Nesta fase, o `.env` real não existe; copie `.env.example` se quiser mudar algo.
-- **Próximo passo:** Fase 1 (spikes), começando pela proposta de feeds RSS (D6) para o dono revisar. Na Fase 2, adicionar testes do banco (SQLite em memória) e de `get_session`, que a Fase 0 não cobre.
+- **Atualizado em:** 2026-11-09
+- **Última sessão:** primeira tarefa da Fase 1 feita (feeds RSS, D6). `uv` reinstalado no WSL com o instalador da Astral (`curl -LsSf https://astral.sh/uv/install.sh | sh`, fica em `~/.local/bin`; o `pipx` não existe mais). Criados `spikes/feeds_candidates.toml` (25 candidatos) e `spikes/rss_probe.py`; grupo de dependências `spikes` (`httpx`, `feedparser`) no `pyproject.toml`. Rodar: `uv run --group spikes python spikes/rss_probe.py`. Resultado: 24/25 feeds responderam, 537 itens em 7 dias (a hipótese era 60 a 150); vários feeds truncam antes de 7 dias, então o volume real é maior. Canaltech manda o texto inteiro no resumo (média de 3.436 caracteres), Hugging Face vem sem resumo, todos os itens têm data.
+- **Em andamento:** nada. Falta registrar o resultado no `FEASIBILITY.md` (último item da Fase 1), junto com o ADR de D6.
+- **Bloqueios:** nenhum. D1 a D7 ainda pendentes (D1/D2 resolvidas na Fase 1). Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
+- **Decisões de sessão:**
+  - O dono autorizou o agente a criar branches (commits e push continuam com o dono). O `.env` real não existe; copie `.env.example` se quiser mudar algo.
+  - Feeds (D6), corte aprovado: **manter** Tecnoblog, Canaltech, Tecmundo, Mobile Time, Convergência Digital, Ars Technica, The Verge, TechCrunch, MIT Technology Review, OpenAI Blog, Cloudflare Blog, The Hacker News, BleepingComputer, The Register. **Cortar** Wired, Tom's Hardware, Google AI Blog, Hugging Face. **Ainda sem decisão** (o dono aprovou só o corte): Olhar Digital, Hacker News front page, Krebs, AWS News Blog, InfoQ e AnandTech (deu timeout; testar de novo). Mistura de português e inglês aprovada.
+  - Para a Fase 3: cortar o resumo num tamanho fixo (Canaltech traz o texto inteiro) e lembrar que o volume é maior que o previsto, então o limite de entrada do LLM é o gargalo.
+  - O corte final ainda precisa ser conferido quanto a notícia versus review, oferta e opinião; isso sai do roteiro de teste com o Gemini.
+- **Próximo passo:** commit da tarefa (sugestão: branch `fase-1-spikes`, com `spikes/`, `pyproject.toml`, `uv.lock` e `docs/TASKS.md`). Depois, o roteiro de teste com o Gemini e a medição de tokens (D1).
 
 ## Concluído
 
@@ -26,7 +30,7 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 - [ ] D3. Canal do MVP: Spotify (feed RSS) ou Telegram. Sugestão: Telegram primeiro (sem depender do deploy), RSS para o Spotify em seguida. Necessária na Fase 7.
 - [ ] D4. Quem pode pedir episódio manual (RF21): só o admin ou qualquer usuário. Sugestão: só o admin, para proteger cotas. Necessária na Fase 6.
 - [ ] D5. Dia e hora do episódio semanal. Sugestão: segunda-feira, 6h, `America/Sao_Paulo`. Necessária na Fase 6.
-- [ ] D6. Lista inicial de feeds RSS (pt-BR e inglês). Sugestão: proposta na Fase 1 para você revisar. Necessária na Fase 3.
+- [ ] D6. Lista inicial de feeds RSS (pt-BR e inglês). Corte aprovado em 2026-11-09 (ver "Estado atual"); faltam decidir 6 feeds e escrever o ADR. Necessária na Fase 3.
 - [ ] D7. Cadastrar cartão no Google Cloud (TTS) e na Oracle (hospedagem). Sugestão: sim, com alerta de orçamento em US$ 1; se não, Piper/edge-tts e outra hospedagem. Necessária nas Fases 5 e 9.
 
 ## ✅ Fase 0: Fundação do projeto
@@ -41,9 +45,9 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 
 **Aceite:** `uv sync`, `uv run pytest`, `uv run ruff check .` e `uv run alembic upgrade head` passam numa cópia limpa do repositório; `GET /health` retorna 200.
 
-## ⬜ Fase 1: Testes de viabilidade (scripts descartáveis em `spikes/`)
+## 🔄 Fase 1: Testes de viabilidade (scripts descartáveis em `spikes/`)
 
-- [ ] Propor a lista inicial de feeds RSS e medir quantos itens por semana cada um gera (D6)
+- [x] Propor a lista inicial de feeds RSS e medir quantos itens por semana cada um gera (D6). Corte aprovado; resultado e ADR pendentes no último item da fase
 - [ ] Gerar um roteiro de teste com o Gemini a partir de notícias reais e medir tokens de entrada e saída
 - [ ] Confirmar no AI Studio os limites reais do free tier do modelo escolhido
 - [ ] Gerar o mesmo trecho de 1 minuto em Google Chirp 3 HD, edge-tts e Piper para audição (D2)
