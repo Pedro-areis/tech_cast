@@ -38,6 +38,20 @@ O volume é pequeno. Qualquer free tier razoável comporta, desde que **exista**
 | Claude via `claude -p` com a assinatura Pro | Sem custo extra | **Consome o limite da assinatura Pro** [C] | Qualidade alta de texto | Ver seção abaixo |
 | API da Anthropic | **Paga**, por token [C] | | Melhor integração | Viola a restrição de custo zero |
 
+### Medição real do Gemini (Fase 1, 2026-11-11 e 12)
+Teste em `spikes/gemini_script.py`: 2 chamadas (curadoria e roteiro), API REST com `httpx`, modelo `gemini-3.5-flash`, 18 feeds (419 itens em 7 dias, resumo cortado em 500 caracteres).
+
+| Etapa | Entrada | Saída | Raciocínio | Tempo |
+|---|---|---|---|---|
+| Curadoria | 36.145 | 570 | 3.634 | 22 s |
+| Roteiro | 6.248 | 3.363 | 10.012 | 82 s |
+| **Episódio** | **~42,4 mil** | **~17,6 mil** (com raciocínio) | | |
+
+- **[C]** O JSON saiu válido de primeira nas duas rodadas, o roteiro ficou com ~2.000 palavras (alvo 1.500 a 2.250), com fontes por seção e nenhum id inventado. O consumo de entrada ficou dentro da estimativa de 25 a 40 mil tokens por semana, um pouco acima (~42 mil). Os tokens de raciocínio contam como saída.
+- **[C]** O `gemini-2.5-flash` não está disponível para contas novas (404). Modelos listados na conta em 2026-11-11: família 3.x Flash e Flash-Lite, e `gemini-flash-latest`.
+- **[C]** Confiabilidade: em 2026-11-11, `gemini-3.8-flash` e `gemini-3.7-flash` não responderam nem a um prompt de uma frase em 100 s; `gemini-3.6-flash` e `gemini-3.5-flash` devolveram 503 ("alta demanda") em várias chamadas, inclusive de 3 mil tokens, então a causa não é o tamanho da entrada. Em 2026-11-12, o `gemini-3.5-flash` não deu nenhum 503. Nenhum 429 apareceu.
+- **[H]** O pipeline precisa de nova tentativa com espera e, de preferência, de um segundo modelo de reserva. Só o `gemini-3.5-flash` foi avaliado de ponta a ponta; os modelos lite não foram testados (dispensado pelo dono). Limites do free tier ainda a confirmar no AI Studio.
+
 ### Sobre usar o Claude Pro (sua pergunta)
 - **[C]** Pelo artigo atual do Help Center (atualização de 2026-10-07), o `claude -p` e o Agent SDK autenticados com o plano **continuam consumindo os limites da assinatura**. Os créditos mensais de API anunciados valem para Max, Ultra e Team, **não para o Pro**.
 - **[C]** Os limites do Pro (janela de 5 horas e limite semanal) são compartilhados entre o claude.ai e o Claude Code. A Anthropic não publica esses limites em tokens, então não dá para calcular os 10% antecipadamente.
