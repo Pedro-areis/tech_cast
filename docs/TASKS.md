@@ -6,16 +6,20 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 
 ## Estado atual
 
-- **Atualizado em:** 2026-11-09
-- **Última sessão:** primeira tarefa da Fase 1 feita (feeds RSS, D6). `uv` reinstalado no WSL com o instalador da Astral (`curl -LsSf https://astral.sh/uv/install.sh | sh`, fica em `~/.local/bin`; o `pipx` não existe mais). Criados `spikes/feeds_candidates.toml` (25 candidatos) e `spikes/rss_probe.py`; grupo de dependências `spikes` (`httpx`, `feedparser`) no `pyproject.toml`. Rodar: `uv run --group spikes python spikes/rss_probe.py`. Resultado: 24/25 feeds responderam, 537 itens em 7 dias (a hipótese era 60 a 150); vários feeds truncam antes de 7 dias, então o volume real é maior. Canaltech manda o texto inteiro no resumo (média de 3.436 caracteres), Hugging Face vem sem resumo, todos os itens têm data.
-- **Em andamento:** nada. Falta registrar o resultado no `FEASIBILITY.md` (último item da Fase 1), junto com o ADR de D6.
-- **Bloqueios:** nenhum. D1 a D7 ainda pendentes (D1/D2 resolvidas na Fase 1). Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
+- **Atualizado em:** 2026-11-12
+- **Última sessão:** segunda tarefa da Fase 1 feita (roteiro de teste com o Gemini, D1). Criado `spikes/gemini_script.py`: coleta os 14 feeds aprovados (7 dias, resumo cortado em 500 caracteres), faz a curadoria (chamada 1) e o roteiro (chamada 2) por `httpx` direto, valida o JSON com Pydantic e imprime os tokens. Rodar: `uv run --group spikes python -u spikes/gemini_script.py --model gemini-3.5-flash` (saídas em `spikes/out/`, ignorada pelo git). `GEMINI_API_KEY` entrou no `.env.example`; a chave real está no `.env` do dono.
+  - **Segunda rodada, 18 feeds (419 itens: 245 pt, 174 en), gemini-3.5-flash:** curadoria 36.145 tokens de entrada, 570 de saída e 3.634 de raciocínio (22 s); roteiro 6.248 de entrada, 3.363 de saída e 10.012 de raciocínio (82 s). Total por episódio: ~42,4 mil de entrada e ~17,6 mil de saída (com raciocínio). 2.043 palavras, 8 seções, 77 fontes, JSON válido, **sem nenhum 503 nessa rodada**. As pautas escolhidas tiveram 42 itens em português e 35 em inglês (mistura equilibrada), mas nenhuma pauta saiu do InfoQ nem foi de desenvolvimento ou arquitetura: a curadoria ainda favorece notícia geral, e o ajuste de prompt para profundidade técnica fica para a Fase 4.
+  - **Primeira rodada, 14 feeds (gemini-3.5-flash, 378 itens):** curadoria com 35.706 tokens de entrada, 388 de saída e 3.632 de raciocínio; roteiro com 3.220 de entrada, 3.458 de saída e 6.979 de raciocínio. Total por episódio: ~38,9 mil de entrada e ~14,5 mil de saída (com raciocínio). O roteiro saiu com 2.111 palavras (alvo 1.500 a 2.250), 8 seções, 29 fontes distintas, nenhum id inválido, JSON válido de primeira, tom e pt-BR bons, rumores marcados como rumor.
+  - **Achado principal: confiabilidade, não qualidade.** O `gemini-2.5-flash` não está disponível para contas novas (404). Em 2026-11-11, `gemini-3.8-flash` e `gemini-3.7-flash` não responderam nem a um "olá" em 100 s; `gemini-3.6-flash` e `gemini-3.5-flash` devolveram 503 ("alta demanda") em várias chamadas, e um dos roteiros falhou nas 4 tentativas. Com nova tentativa (espera de 15 s por tentativa) as execuções terminaram, mas a curadoria levou 16 a 45 s e o roteiro 59 s. Nenhum 429 apareceu. Ainda não há um modelo estável escolhido.
+- **Em andamento:** nada. Falta confirmar os limites do free tier no AI Studio (próximo item), registrar tudo no `FEASIBILITY.md` e escrever os ADRs.
+- **Bloqueios:** nenhum. D1 a D7 ainda pendentes. Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
 - **Decisões de sessão:**
-  - O dono autorizou o agente a criar branches (commits e push continuam com o dono). O `.env` real não existe; copie `.env.example` se quiser mudar algo.
-  - Feeds (D6), corte aprovado: **manter** Tecnoblog, Canaltech, Tecmundo, Mobile Time, Convergência Digital, Ars Technica, The Verge, TechCrunch, MIT Technology Review, OpenAI Blog, Cloudflare Blog, The Hacker News, BleepingComputer, The Register. **Cortar** Wired, Tom's Hardware, Google AI Blog, Hugging Face. **Ainda sem decisão** (o dono aprovou só o corte): Olhar Digital, Hacker News front page, Krebs, AWS News Blog, InfoQ e AnandTech (deu timeout; testar de novo). Mistura de português e inglês aprovada.
-  - Para a Fase 3: cortar o resumo num tamanho fixo (Canaltech traz o texto inteiro) e lembrar que o volume é maior que o previsto, então o limite de entrada do LLM é o gargalo.
-  - O corte final ainda precisa ser conferido quanto a notícia versus review, oferta e opinião; isso sai do roteiro de teste com o Gemini.
-- **Próximo passo:** commit da tarefa (sugestão: branch `fase-1-spikes`, com `spikes/`, `pyproject.toml`, `uv.lock` e `docs/TASKS.md`). Depois, o roteiro de teste com o Gemini e a medição de tokens (D1).
+  - O dono autorizou o agente a criar branches (commits e push continuam com o dono).
+  - Gemini no spike: `httpx` direto, duas chamadas, só os 14 feeds aprovados. O SDK `google-genai` fica para a Fase 4, com ADR próprio.
+  - Feeds (D6), lista de 2026-11-12 (substitui o corte de 2026-11-09; falta o ADR): **18 feeds, 9 BR e 9 estrangeiros.** BR: Tecnoblog, Canaltech, Tecmundo, Olhar Digital, Adrenaline, Mobile Time, Convergência Digital, Meio Bit, Núcleo. Estrangeiros: The Verge, TechCrunch, Ars Technica, Engadget, MIT Technology Review, BleepingComputer, BBC Technology, The Register, InfoQ. Fora: Wired (cortado antes), Tom's Hardware, Google AI Blog, Hugging Face, OpenAI Blog, Cloudflare Blog, The Hacker News, Hacker News front page, Krebs, AWS News Blog, AnandTech. Reserva: NYT Technology, The Guardian, Showmetech, Folha Tec. O podcast deve ser técnico o bastante para quem trabalha na área, mas leve: pautas de cultura e entretenimento tech (GTA 6, caso Nvidia) são bem-vindas.
+  - Para a Fase 3: cortar o resumo num tamanho fixo (Canaltech traz o texto inteiro); o limite de entrada do LLM é o gargalo.
+- **Observações para a Fase 4 (a decidir com o dono):** (1) a curadoria escolheu quase só veículos em português; vale pedir mistura com os de inglês no prompt. (2) Ela agrupou notícias muito diferentes numa pauta (GTA 6 e PS5). (3) Rumores sobre a vida pessoal de uma pessoa (caso Jensen Huang) entraram no roteiro; falta definir uma regra editorial. (4) O pipeline precisa de nova tentativa com espera e, talvez, um segundo modelo de reserva, dada a taxa de 503.
+- **Próximo passo:** o dono lê `spikes/out/script.txt` e valida a tarefa. Depois: confirmar os limites reais do free tier no AI Studio. Commit sugerido (branch `fase-1-spikes`): `spikes/gemini_script.py`, `.env.example`, `.gitignore` e `docs/TASKS.md`.
 
 ## Concluído
 
@@ -48,7 +52,7 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 ## 🔄 Fase 1: Testes de viabilidade (scripts descartáveis em `spikes/`)
 
 - [x] Propor a lista inicial de feeds RSS e medir quantos itens por semana cada um gera (D6). Corte aprovado; resultado e ADR pendentes no último item da fase
-- [ ] Gerar um roteiro de teste com o Gemini a partir de notícias reais e medir tokens de entrada e saída
+- [x] Gerar um roteiro de teste com o Gemini a partir de notícias reais e medir tokens de entrada e saída (resultado em "Estado atual"; falta registrar no `FEASIBILITY.md`)
 - [ ] Confirmar no AI Studio os limites reais do free tier do modelo escolhido
 - [ ] Gerar o mesmo trecho de 1 minuto em Google Chirp 3 HD, edge-tts e Piper para audição (D2)
 - [ ] (Opcional) Rodar o mesmo roteiro com `claude -p` e medir o consumo com `/usage` antes e depois

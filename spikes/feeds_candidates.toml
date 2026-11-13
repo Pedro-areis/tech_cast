@@ -148,3 +148,33 @@ name = "InfoQ"
 lang = "en"
 category = "dev"
 url = "https://feed.infoq.com/"
+
+[[feed]]
+name = "Adrenaline"
+lang = "pt"
+category = "hardware"
+url = "https://adrenaline.com.br/feed/"
+
+[[feed]]
+name = "Engadget"
+lang = "en"
+category = "general"
+url = "https://www.engadget.com/rss.xml"
+
+[[feed]]
+name = "BBC Technology"
+lang = "en"
+category = "general"
+url = "https://feeds.bbci.co.uk/news/technology/rss.xml"
+
+[[feed]]
+name = "Meio Bit"
+lang = "pt"
+category = "general"
+url = "https://meiobit.com/feed/"
+
+[[feed]]
+name = "Núcleo"
+lang = "pt"
+category = "society"
+url = "https://nucleo.jor.br/feed/"

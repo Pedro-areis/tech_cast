@@ -21,3 +21,6 @@ data/
 *.db-wal
 *.db-shm
 *.mp3
+
+# Saídas dos spikes (roteiros, respostas brutas)
+spikes/out/
