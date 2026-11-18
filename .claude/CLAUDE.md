@@ -7,7 +7,7 @@ Responda ao usuário em português brasileiro.
 Leia antes de trabalhar:
 - [docs/PROJECT.md](../docs/PROJECT.md): problema, requisitos e definições do domínio.
 - [docs/TASKS.md](../docs/TASKS.md): fases, tarefas e decisões pendentes. Atualize ao concluir cada tarefa. Comece a sessão pela seção "Estado atual".
-  - Se a pasta `backlog-page/` existir (é local e ignorada pelo git), rode `node backlog-page/build-backlog.mjs` depois de alterar o TASKS.md. O comando regenera a página visual do backlog. A página é derivada: nunca edite o HTML à mão. No WSL deste projeto, o Node está instalado no próprio WSL (`~/.local/bin/node`): use `node backlog-page/build-backlog.mjs`.
+- Se a pasta `backlog-page/` existir (é local e ignorada pelo git), rode `node backlog-page/build-backlog.mjs` depois de alterar o TASKS.md. O comando regenera a página visual do backlog. A página é derivada: nunca edite o HTML à mão. No WSL deste projeto, o Node está instalado no próprio WSL (`~/.local/bin/node`): use `node backlog-page/build-backlog.mjs`.
 - [docs/FEASIBILITY.md](../docs/FEASIBILITY.md): análise de custo e limites de cada provedor externo. Consulte antes de mexer em qualquer integração.
 
 ## Troca de bastão
