@@ -7,12 +7,12 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 ## Estado atual
 
 - **Atualizado em:** 2026-11-17
-- **Última sessão:** os ADRs 0002 (TTS, D2), 0003 (feeds, D6) e 0004 (LLM, D1) foram aprovados pelo dono e estão "Aceito"; D1, D2 e D6 saíram de "Decisões pendentes". Antes: levantamento do Spotify (`FEASIBILITY.md`, seção 4) e `claude -p` dispensado.
+- **Última sessão:** Fase 1 aceita pelo dono e fechada. Todos os itens feitos; ADRs 0002 (TTS), 0003 (feeds) e 0004 (LLM) aceitos. Pendências que seguem como [H] no `FEASIBILITY.md`: cotas exatas do free tier do Gemini (confirmar na Fase 4, medindo a confiabilidade em outros dias) e o cadastro real do feed no Spotify (Fase 9).
   - **Sessão anterior:** segunda tarefa da Fase 1 feita (roteiro de teste com o Gemini, D1). Criado `spikes/gemini_script.py`: coleta os 18 feeds da lista atual (7 dias, resumo cortado em 500 caracteres), faz a curadoria (chamada 1) e o roteiro (chamada 2) por `httpx` direto, valida o JSON com Pydantic e imprime os tokens. Rodar: `uv run --group spikes python -u spikes/gemini_script.py --model gemini-3.5-flash` (saídas em `spikes/out/`, ignorada pelo git). `GEMINI_API_KEY` entrou no `.env.example`; a chave real está no `.env` do dono.
   - **Segunda rodada, 18 feeds (419 itens: 245 pt, 174 en), gemini-3.5-flash:** curadoria 36.145 tokens de entrada, 570 de saída e 3.634 de raciocínio (22 s); roteiro 6.248 de entrada, 3.363 de saída e 10.012 de raciocínio (82 s). Total por episódio: ~42,4 mil de entrada e ~17,6 mil de saída (com raciocínio). 2.043 palavras, 8 seções, 77 fontes, JSON válido, **sem nenhum 503 nessa rodada**. As pautas escolhidas tiveram 42 itens em português e 35 em inglês (mistura equilibrada), mas nenhuma pauta saiu do InfoQ nem foi de desenvolvimento ou arquitetura: a curadoria ainda favorece notícia geral, e o ajuste de prompt para profundidade técnica fica para a Fase 4.
   - **Primeira rodada, 14 feeds (gemini-3.5-flash, 378 itens):** curadoria com 35.706 tokens de entrada, 388 de saída e 3.632 de raciocínio; roteiro com 3.220 de entrada, 3.458 de saída e 6.979 de raciocínio. Total por episódio: ~38,9 mil de entrada e ~14,5 mil de saída (com raciocínio). O roteiro saiu com 2.111 palavras (alvo 1.500 a 2.250), 8 seções, 29 fontes distintas, nenhum id inválido, JSON válido de primeira, tom e pt-BR bons, rumores marcados como rumor.
   - **Achado principal: confiabilidade, não qualidade.** O `gemini-2.5-flash` não está disponível para contas novas (404). Em 2026-11-11, `gemini-3.8-flash` e `gemini-3.7-flash` não responderam nem a um "olá" em 100 s; `gemini-3.6-flash` e `gemini-3.5-flash` devolveram 503 ("alta demanda") em várias chamadas, e um dos roteiros falhou nas 4 tentativas. Com nova tentativa (espera de 15 s por tentativa) as execuções terminaram, mas a curadoria levou 16 a 45 s e o roteiro 59 s. Nenhum 429 apareceu. Ainda não há um modelo estável escolhido.
-- **Em andamento:** nada. Todos os itens da Fase 1 estão marcados; falta o dono aceitar a fase.
+- **Em andamento:** nada. Fase 2 ainda não começada.
 - **Bloqueios:** nenhum. D3, D4, D5 e D7 seguem pendentes. Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
 - **Decisões de sessão:**
   - O dono autorizou o agente a criar branches (commits e push continuam com o dono).
@@ -21,7 +21,7 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
   - O dono dispensou o teste com os modelos lite (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`). Não repetir. A D1 segue aberta: só o `gemini-3.5-flash` foi avaliado de ponta a ponta; falta repetir em outro horário/dia para confirmar que os 503 foram pico passageiro. O roteiro do spike mencionou o lançamento do Gemini 4 Hydrogen, sucessor do 3.8 Flash (não verificado).
   - Para a Fase 3: cortar o resumo num tamanho fixo (Canaltech traz o texto inteiro); o limite de entrada do LLM é o gargalo.
 - **Observações para a Fase 4 (a decidir com o dono):** (1) a mistura pt/en ficou equilibrada com 9 BR e 9 estrangeiros, mas falta profundidade técnica (nenhuma pauta de dev/arquitetura); pedir 1 a 2 pautas técnicas e 1 a 2 de cultura/entretenimento tech por episódio, para um público da área sem ficar massante. (2) Na primeira rodada ela agrupou notícias muito diferentes numa pauta (GTA 6 e PS5). (3) O dono considera pautas como GTA 6 e o caso Nvidia interessantes e bem-vindas; manter a marcação de rumor como rumor e definir só uma regra editorial para vida pessoal. (4) O pipeline precisa de nova tentativa com espera e, talvez, um segundo modelo de reserva, dada a taxa de 503.
-- **Próximo passo:** o dono aceita a Fase 1 (aceite: cada [H] crítico virou [C] ou foi corrigido; amostras ouvidas; ADRs do LLM e do TTS aprovados) e leva a branch `fase-1-spikes` à `main`. Depois, Fase 2 (modelo de dados e episódios), em branch nova. Commit pendente: `docs/adr/0002-*.md`, `0003-*.md`, `0004-*.md` (status) e `docs/TASKS.md`.
+- **Próximo passo:** o dono leva `fase-1-spikes` à `main` (push e PR) e cria a branch da Fase 2. Então começa a Fase 2 (modelo de dados e episódios), com o ciclo de sempre (problema, arquivos, alternativas, critérios de aceite) antes de implementar.
 
 ## Concluído
 
@@ -51,7 +51,7 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 
 **Aceite:** `uv sync`, `uv run pytest`, `uv run ruff check .` e `uv run alembic upgrade head` passam numa cópia limpa do repositório; `GET /health` retorna 200.
 
-## 🔄 Fase 1: Testes de viabilidade (scripts descartáveis em `spikes/`)
+## ✅ Fase 1: Testes de viabilidade (scripts descartáveis em `spikes/`)
 
 - [x] Propor a lista inicial de feeds RSS e medir quantos itens por semana cada um gera (D6). Corte aprovado; resultado e ADR pendentes no último item da fase
 - [x] Gerar um roteiro de teste com o Gemini a partir de notícias reais e medir tokens de entrada e saída (resultado em "Estado atual"; falta registrar no `FEASIBILITY.md`)
