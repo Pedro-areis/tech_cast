@@ -97,13 +97,23 @@ Em qualquer opção, o texto é dividido em partes (o Google aceita ~5.000 bytes
 - **[H]** O Spotify **não tem API pública de upload** de episódios. Há duas formas de publicar:
   1. **Upload manual** no Spotify for Creators. Não automatizável, então não atende ao RF23.
   2. **Feed RSS próprio:** o TechCast publica um `feed.xml` de podcast, você envia a URL **uma vez** no Spotify for Creators, e depois o Spotify lê o feed periodicamente e pega os episódios novos sozinho. **Esse é o caminho viável.**
-- Exigências para o feed [C, página de ajuda do Spotify]: arquivos MP3, URLs de áudio sempre acessíveis, capa JPG/PNG de até 3000 × 3000 px, feed válido (Cast Feed Validator ou Podba.se).
-- Exigências usuais [H, confirmar na Fase 1]: e-mail do dono no feed (`itunes:owner`) para a verificação por código, capa quadrada de no mínimo 1400 px, título, descrição, idioma e categoria.
+- Exigências para o feed [C, ajuda do Spotify e Podcast Delivery Specification v1.10, maio/2025, verificadas em 2026-11-17]:
+  - **Áudio:** MP3 (recomendado 128 kbps ou mais), URLs sempre acessíveis, duração máxima de 12 h. Nosso episódio (~15 min) está muito abaixo.
+  - **Imagem:** quadrada (1:1), de preferência na maior resolução; JPG, PNG ou GIF de até 3000 × 3000 px (ajuda do Spotify). Define-se por `<itunes:image href>` ou `<image><url>`; pelo menos um dos dois é obrigatório.
+  - **Feed:** XML 1.0 em UTF-8, RSS 2.0, sensível a maiúsculas; `&` precisa estar escapado (`&amp;`). Validar no Cast Feed Validator ou Podba.se. Um feed = um podcast.
+  - **Canal (obrigatórios):** `title`, `link`, `description`, `itunes:author`, imagem (uma das duas formas). **Recomendados:** `language` (`pt-BR`), `itunes:category` (necessária para as recomendações do Spotify), `itunes:explicit`, `itunes:type` (`episodic`).
+  - **Item (obrigatórios):** `guid` estável, `enclosure` (`url`, `type="audio/mpeg"`, `length` em bytes) ou `media:content`, `pubDate` em RFC 2822, `title` e `description`. **Opcionais úteis:** `itunes:duration`, `itunes:episode`, `itunes:season`.
+  - **Verificação de dono:** o Spotify usa o e-mail do feed (`<itunes:email>`, dentro de `<itunes:owner>`) para confirmar que o podcast é seu. **O e-mail fica público** para quem abrir o feed. Precisa ser uma caixa que o dono acessa. Mudou o e-mail no feed: o Spotify leva algumas horas para notar (se passar de 4 h, procurar o suporte).
+  - **Lembrar:** o Spotify só baixa de novo um áudio ou imagem se o **nome/caminho do arquivo mudar**. Então cada episódio precisa de um nome de arquivo único (ex.: `2026-W47.mp3`), nunca sobrescrever.
+  - **Frequência de leitura:** depois de cadastrado, o Spotify consulta o feed várias vezes por hora (respeita `ETag` e `Last-Modified`). Reserve pelo menos 1 h até a mudança chegar aos clientes. O podcast só fica público com pelo menos 1 episódio.
+  - **Cadastro (uma vez):** em `creators.spotify.com/switch`, informar a URL do feed. Hosts fora da lista oficial (o nosso) "podem funcionar, sem garantia de suporte". Depois, o Spotify oferece um link de redirecionamento para o host antigo; no nosso caso, não há host antigo e esse passo não se aplica [H, confirmar no cadastro real].
+  - A especificação v1.10 é marcada como confidencial pelo Spotify; aqui só resumimos os requisitos, sem copiar o texto.
 - **Consequências práticas:**
   - O servidor precisa estar **na internet, com HTTPS, 24 horas por dia**, servindo o feed e os MP3. Isso puxa a Fase de deploy para o caminho crítico.
   - Depois de cadastrado, o podcast fica **público**: qualquer pessoa pode encontrá-lo no Spotify. Não há podcast privado por convite no fluxo de RSS [H].
   - O Spotify não sabe quem são os "usuários cadastrados". Cada um segue o programa no app; não há entrega por usuário nem status de entrega (RF24 não se aplica).
-  - Atraso entre publicar no feed e aparecer no app: horas [H].
+  - Atraso entre publicar no feed e aparecer no app: pelo menos 1 h, na prática algumas horas [C, especificação do Spotify].
+  - **E-mail público:** como o `itunes:email` aparece para qualquer um, use um e-mail dedicado ao podcast (não o pessoal nem o de trabalho). Isso respeita a regra de não expor dados pessoais em páginas públicas.
   - O roteiro resume notícias com as próprias palavras e cita as fontes. Ler trechos longos de matérias num podcast público seria um risco de direitos autorais. O prompt deve proibir isso.
   - Bônus: o mesmo feed funciona no Apple Podcasts, Pocket Casts, AntennaPod etc.
 
