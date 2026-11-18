@@ -26,8 +26,10 @@ dev = [
     "ruff>=0.17.4",
 ]
 spikes = [
+    "edge-tts>=7.3.1",
     "feedparser>=6.0.14",
     "httpx>=0.28.1",
+    "piper-tts>=1.8.0",
 ]
 
 [tool.pytest.ini_options]

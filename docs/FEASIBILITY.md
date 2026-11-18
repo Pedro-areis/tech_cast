@@ -72,6 +72,23 @@ Teste em `spikes/gemini_script.py`: 2 chamadas (curadoria e roteiro), API REST c
 
 **Recomendação:** decidir pela audição. A Fase 1 gera o mesmo trecho de roteiro nos três (Google Chirp 3 HD, edge-tts, Piper) e você escolhe. Proposta inicial: Google como padrão, Piper como fallback que nunca falha por cota. Se você não quiser cadastrar cartão no Google Cloud, Piper ou edge-tts.
 
+### Audição de vozes (Fase 1, 2026-11-12)
+Teste em `spikes/tts_voices.py`: o mesmo trecho de 182 palavras (~1 min) do roteiro de teste, em 3 vozes do edge-tts e 3 do Piper (`faber`, `cadu`, `jeff`, todas `medium`). O Chirp 3 HD **não foi testado**: depende do cartão no Google Cloud (D7) e o dono o deixou para depois.
+
+| Voz | Tempo para gerar 1 min | Arquivo |
+|---|---|---|
+| edge-tts Francisca | 12,5 s | MP3, 382 KB |
+| edge-tts Antonio | 31,7 s | MP3, 404 KB |
+| **edge-tts Thalita (Multilingual)** | 38,3 s | MP3, 380 KB |
+| Piper faber / cadu / jeff | ~4 s cada | WAV, ~2,7 MB (precisa de `ffmpeg` para virar MP3) |
+
+- **[C]** O dono ouviu as amostras e **preferiu a voz Thalita (`pt-BR-ThalitaMultilingualNeural`, edge-tts)**.
+- **[C]** Tempo do edge-tts varia muito (12 a 38 s por minuto de áudio, depende da rede e do serviço). Um episódio de ~14 min pode levar de 3 a 9 min. Aceitável para uma geração semanal, mas precisa de nova tentativa e de limite de tempo.
+- **[H]** Risco do edge-tts: cliente não oficial do serviço do Microsoft Edge; pode ser bloqueado ou mudar sem aviso, e os termos de uso são incertos. Mitigação: o `TTSProvider` isola a escolha, e o **Piper fica como fallback** sem cota nem rede. O limite de tamanho de texto por chamada e a estabilidade em 14 min de áudio ainda não foram medidos (Fase 5).
+- **[H]** Piper não foi escolhido pelo dono; só serve de reserva. Qual voz Piper usar como reserva fica para a Fase 5, se o fallback for aprovado.
+- **Proposta para o ADR de D2:** edge-tts com a voz Thalita como padrão, Piper como fallback. Chirp 3 HD segue como opção se o dono decidir cadastrar o cartão (D7). Falta o ADR, que só é escrito depois da aprovação do dono.
+
+
 Em qualquer opção, o texto é dividido em partes (o Google aceita ~5.000 bytes por requisição [H]) e o áudio é juntado com `ffmpeg`.
 
 ## 4. Distribuição: Spotify e Telegram
