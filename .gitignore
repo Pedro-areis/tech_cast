@@ -1,3 +1,6 @@
+# Ignore local IDE settings
+.vscode/
+
 # Página local do backlog (derivada do docs/TASKS.md)
 backlog-page/
 
@@ -18,3 +21,6 @@ data/
 *.db-wal
 *.db-shm
 *.mp3
+
+# Saídas dos spikes (roteiros, respostas brutas)
+spikes/out/

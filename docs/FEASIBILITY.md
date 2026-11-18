@@ -38,6 +38,21 @@ O volume é pequeno. Qualquer free tier razoável comporta, desde que **exista**
 | Claude via `claude -p` com a assinatura Pro | Sem custo extra | **Consome o limite da assinatura Pro** [C] | Qualidade alta de texto | Ver seção abaixo |
 | API da Anthropic | **Paga**, por token [C] | | Melhor integração | Viola a restrição de custo zero |
 
+### Medição real do Gemini (Fase 1, 2026-11-11 e 12)
+Teste em `spikes/gemini_script.py`: 2 chamadas (curadoria e roteiro), API REST com `httpx`, modelo `gemini-3.5-flash`, 18 feeds (419 itens em 7 dias, resumo cortado em 500 caracteres).
+
+| Etapa | Entrada | Saída | Raciocínio | Tempo |
+|---|---|---|---|---|
+| Curadoria | 36.145 | 570 | 3.634 | 22 s |
+| Roteiro | 6.248 | 3.363 | 10.012 | 82 s |
+| **Episódio** | **~42,4 mil** | **~17,6 mil** (com raciocínio) | | |
+
+- **[C]** O JSON saiu válido de primeira nas duas rodadas, o roteiro ficou com ~2.000 palavras (alvo 1.500 a 2.250), com fontes por seção e nenhum id inventado. O consumo de entrada ficou dentro da estimativa de 25 a 40 mil tokens por semana, um pouco acima (~42 mil). Os tokens de raciocínio contam como saída.
+- **[C]** O `gemini-2.5-flash` não está disponível para contas novas (404). Modelos listados na conta em 2026-11-11: família 3.x Flash e Flash-Lite, e `gemini-flash-latest`.
+- **[C]** Confiabilidade: em 2026-11-11, `gemini-3.8-flash` e `gemini-3.7-flash` não responderam nem a um prompt de uma frase em 100 s; `gemini-3.6-flash` e `gemini-3.5-flash` devolveram 503 ("alta demanda") em várias chamadas, inclusive de 3 mil tokens, então a causa não é o tamanho da entrada. Em 2026-11-12, o `gemini-3.5-flash` não deu nenhum 503. Nenhum 429 apareceu.
+- **[H]** O pipeline precisa de nova tentativa com espera e, de preferência, de um segundo modelo de reserva. Só o `gemini-3.5-flash` foi avaliado de ponta a ponta; os modelos lite não foram testados (dispensado pelo dono). 
+- **[H]** Limites do free tier (RPM, TPM, RPD): o painel de uso do AI Studio (consultado em 2026-11-12) mostrou apenas o **uso**, não as cotas. Ele registrou, para o `gemini-3.6-flash`, menos de 50 mil tokens de entrada, menos de 20 mil de saída e 2 requisições (modelo mais usado hoje e ontem). Isso é compatível com uma execução completa do spike (2 chamadas, ~42 mil de entrada, ~17,6 mil de saída), mas o spike usou o `gemini-3.5-flash`; a divergência de nome no painel não foi esclarecida. **Evidência prática:** uma requisição de ~36 mil tokens de entrada passou no free tier sem nenhum 429, então o TPM é de pelo menos esse valor. As cotas em si continuam não confirmadas. Para 1 episódio por semana (2 chamadas, ~60 mil tokens), a folga é grande mesmo com as cotas mais baixas citadas por terceiros; a Fase 4 deve tratar 429 como falha com nova tentativa.
+
 ### Sobre usar o Claude Pro (sua pergunta)
 - **[C]** Pelo artigo atual do Help Center (atualização de 2026-10-07), o `claude -p` e o Agent SDK autenticados com o plano **continuam consumindo os limites da assinatura**. Os créditos mensais de API anunciados valem para Max, Ultra e Team, **não para o Pro**.
 - **[C]** Os limites do Pro (janela de 5 horas e limite semanal) são compartilhados entre o claude.ai e o Claude Code. A Anthropic não publica esses limites em tokens, então não dá para calcular os 10% antecipadamente.
@@ -57,6 +72,23 @@ O volume é pequeno. Qualquer free tier razoável comporta, desde que **exista**
 
 **Recomendação:** decidir pela audição. A Fase 1 gera o mesmo trecho de roteiro nos três (Google Chirp 3 HD, edge-tts, Piper) e você escolhe. Proposta inicial: Google como padrão, Piper como fallback que nunca falha por cota. Se você não quiser cadastrar cartão no Google Cloud, Piper ou edge-tts.
 
+### Audição de vozes (Fase 1, 2026-11-12)
+Teste em `spikes/tts_voices.py`: o mesmo trecho de 182 palavras (~1 min) do roteiro de teste, em 3 vozes do edge-tts e 3 do Piper (`faber`, `cadu`, `jeff`, todas `medium`). O Chirp 3 HD **não foi testado**: depende do cartão no Google Cloud (D7) e o dono o deixou para depois.
+
+| Voz | Tempo para gerar 1 min | Arquivo |
+|---|---|---|
+| edge-tts Francisca | 12,5 s | MP3, 382 KB |
+| edge-tts Antonio | 31,7 s | MP3, 404 KB |
+| **edge-tts Thalita (Multilingual)** | 38,3 s | MP3, 380 KB |
+| Piper faber / cadu / jeff | ~4 s cada | WAV, ~2,7 MB (precisa de `ffmpeg` para virar MP3) |
+
+- **[C]** O dono ouviu as amostras e **preferiu a voz Thalita (`pt-BR-ThalitaMultilingualNeural`, edge-tts)**.
+- **[C]** Tempo do edge-tts varia muito (12 a 38 s por minuto de áudio, depende da rede e do serviço). Um episódio de ~14 min pode levar de 3 a 9 min. Aceitável para uma geração semanal, mas precisa de nova tentativa e de limite de tempo.
+- **[H]** Risco do edge-tts: cliente não oficial do serviço do Microsoft Edge; pode ser bloqueado ou mudar sem aviso, e os termos de uso são incertos. Mitigação: o `TTSProvider` isola a escolha, e o **Piper fica como fallback** sem cota nem rede. O limite de tamanho de texto por chamada e a estabilidade em 14 min de áudio ainda não foram medidos (Fase 5).
+- **[H]** Piper não foi escolhido pelo dono; só serve de reserva. Qual voz Piper usar como reserva fica para a Fase 5, se o fallback for aprovado.
+- **Proposta para o ADR de D2:** edge-tts com a voz Thalita como padrão, Piper como fallback. Chirp 3 HD segue como opção se o dono decidir cadastrar o cartão (D7). Falta o ADR, que só é escrito depois da aprovação do dono.
+
+
 Em qualquer opção, o texto é dividido em partes (o Google aceita ~5.000 bytes por requisição [H]) e o áudio é juntado com `ffmpeg`.
 
 ## 4. Distribuição: Spotify e Telegram
@@ -65,13 +97,23 @@ Em qualquer opção, o texto é dividido em partes (o Google aceita ~5.000 bytes
 - **[H]** O Spotify **não tem API pública de upload** de episódios. Há duas formas de publicar:
   1. **Upload manual** no Spotify for Creators. Não automatizável, então não atende ao RF23.
   2. **Feed RSS próprio:** o TechCast publica um `feed.xml` de podcast, você envia a URL **uma vez** no Spotify for Creators, e depois o Spotify lê o feed periodicamente e pega os episódios novos sozinho. **Esse é o caminho viável.**
-- Exigências para o feed [C, página de ajuda do Spotify]: arquivos MP3, URLs de áudio sempre acessíveis, capa JPG/PNG de até 3000 × 3000 px, feed válido (Cast Feed Validator ou Podba.se).
-- Exigências usuais [H, confirmar na Fase 1]: e-mail do dono no feed (`itunes:owner`) para a verificação por código, capa quadrada de no mínimo 1400 px, título, descrição, idioma e categoria.
+- Exigências para o feed [C, ajuda do Spotify e Podcast Delivery Specification v1.10, maio/2025, verificadas em 2026-11-17]:
+  - **Áudio:** MP3 (recomendado 128 kbps ou mais), URLs sempre acessíveis, duração máxima de 12 h. Nosso episódio (~15 min) está muito abaixo.
+  - **Imagem:** quadrada (1:1), de preferência na maior resolução; JPG, PNG ou GIF de até 3000 × 3000 px (ajuda do Spotify). Define-se por `<itunes:image href>` ou `<image><url>`; pelo menos um dos dois é obrigatório.
+  - **Feed:** XML 1.0 em UTF-8, RSS 2.0, sensível a maiúsculas; `&` precisa estar escapado (`&amp;`). Validar no Cast Feed Validator ou Podba.se. Um feed = um podcast.
+  - **Canal (obrigatórios):** `title`, `link`, `description`, `itunes:author`, imagem (uma das duas formas). **Recomendados:** `language` (`pt-BR`), `itunes:category` (necessária para as recomendações do Spotify), `itunes:explicit`, `itunes:type` (`episodic`).
+  - **Item (obrigatórios):** `guid` estável, `enclosure` (`url`, `type="audio/mpeg"`, `length` em bytes) ou `media:content`, `pubDate` em RFC 2822, `title` e `description`. **Opcionais úteis:** `itunes:duration`, `itunes:episode`, `itunes:season`.
+  - **Verificação de dono:** o Spotify usa o e-mail do feed (`<itunes:email>`, dentro de `<itunes:owner>`) para confirmar que o podcast é seu. **O e-mail fica público** para quem abrir o feed. Precisa ser uma caixa que o dono acessa. Mudou o e-mail no feed: o Spotify leva algumas horas para notar (se passar de 4 h, procurar o suporte).
+  - **Lembrar:** o Spotify só baixa de novo um áudio ou imagem se o **nome/caminho do arquivo mudar**. Então cada episódio precisa de um nome de arquivo único (ex.: `2026-W47.mp3`), nunca sobrescrever.
+  - **Frequência de leitura:** depois de cadastrado, o Spotify consulta o feed várias vezes por hora (respeita `ETag` e `Last-Modified`). Reserve pelo menos 1 h até a mudança chegar aos clientes. O podcast só fica público com pelo menos 1 episódio.
+  - **Cadastro (uma vez):** em `creators.spotify.com/switch`, informar a URL do feed. Hosts fora da lista oficial (o nosso) "podem funcionar, sem garantia de suporte". Depois, o Spotify oferece um link de redirecionamento para o host antigo; no nosso caso, não há host antigo e esse passo não se aplica [H, confirmar no cadastro real].
+  - A especificação v1.10 é marcada como confidencial pelo Spotify; aqui só resumimos os requisitos, sem copiar o texto.
 - **Consequências práticas:**
   - O servidor precisa estar **na internet, com HTTPS, 24 horas por dia**, servindo o feed e os MP3. Isso puxa a Fase de deploy para o caminho crítico.
   - Depois de cadastrado, o podcast fica **público**: qualquer pessoa pode encontrá-lo no Spotify. Não há podcast privado por convite no fluxo de RSS [H].
   - O Spotify não sabe quem são os "usuários cadastrados". Cada um segue o programa no app; não há entrega por usuário nem status de entrega (RF24 não se aplica).
-  - Atraso entre publicar no feed e aparecer no app: horas [H].
+  - Atraso entre publicar no feed e aparecer no app: pelo menos 1 h, na prática algumas horas [C, especificação do Spotify].
+  - **E-mail público:** como o `itunes:email` aparece para qualquer um, use um e-mail dedicado ao podcast (não o pessoal nem o de trabalho). Isso respeita a regra de não expor dados pessoais em páginas públicas.
   - O roteiro resume notícias com as próprias palavras e cita as fontes. Ler trechos longos de matérias num podcast público seria um risco de direitos autorais. O prompt deve proibir isso.
   - Bônus: o mesmo feed funciona no Apple Podcasts, Pocket Casts, AntennaPod etc.
 
