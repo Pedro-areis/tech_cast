@@ -1,6 +1,6 @@
 # 0004. Provedor de LLM: Gemini Flash com modelo de reserva
 
-- **Status:** Proposto (aguardando a leitura do dono)
+- **Status:** Aceito
 - **Data:** 2026-11-17
 - **Decisão pendente resolvida:** D1
 

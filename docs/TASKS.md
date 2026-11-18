@@ -7,13 +7,13 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
 ## Estado atual
 
 - **Atualizado em:** 2026-11-17
-- **Última sessão:** itens finais da Fase 1: escritos os ADRs `0002-provedor-de-tts` (D2, edge-tts Thalita + Piper de fallback), `0003-lista-inicial-de-feeds` (D6, 18 feeds) e `0004-provedor-de-llm` (D1, Gemini Flash com modelo de reserva configurável; o dono escolheu essa opção). Todos com status "Proposto". Antes: levantamento do Spotify (`FEASIBILITY.md`, seção 4) e `claude -p` dispensado.
+- **Última sessão:** os ADRs 0002 (TTS, D2), 0003 (feeds, D6) e 0004 (LLM, D1) foram aprovados pelo dono e estão "Aceito"; D1, D2 e D6 saíram de "Decisões pendentes". Antes: levantamento do Spotify (`FEASIBILITY.md`, seção 4) e `claude -p` dispensado.
   - **Sessão anterior:** segunda tarefa da Fase 1 feita (roteiro de teste com o Gemini, D1). Criado `spikes/gemini_script.py`: coleta os 18 feeds da lista atual (7 dias, resumo cortado em 500 caracteres), faz a curadoria (chamada 1) e o roteiro (chamada 2) por `httpx` direto, valida o JSON com Pydantic e imprime os tokens. Rodar: `uv run --group spikes python -u spikes/gemini_script.py --model gemini-3.5-flash` (saídas em `spikes/out/`, ignorada pelo git). `GEMINI_API_KEY` entrou no `.env.example`; a chave real está no `.env` do dono.
   - **Segunda rodada, 18 feeds (419 itens: 245 pt, 174 en), gemini-3.5-flash:** curadoria 36.145 tokens de entrada, 570 de saída e 3.634 de raciocínio (22 s); roteiro 6.248 de entrada, 3.363 de saída e 10.012 de raciocínio (82 s). Total por episódio: ~42,4 mil de entrada e ~17,6 mil de saída (com raciocínio). 2.043 palavras, 8 seções, 77 fontes, JSON válido, **sem nenhum 503 nessa rodada**. As pautas escolhidas tiveram 42 itens em português e 35 em inglês (mistura equilibrada), mas nenhuma pauta saiu do InfoQ nem foi de desenvolvimento ou arquitetura: a curadoria ainda favorece notícia geral, e o ajuste de prompt para profundidade técnica fica para a Fase 4.
   - **Primeira rodada, 14 feeds (gemini-3.5-flash, 378 itens):** curadoria com 35.706 tokens de entrada, 388 de saída e 3.632 de raciocínio; roteiro com 3.220 de entrada, 3.458 de saída e 6.979 de raciocínio. Total por episódio: ~38,9 mil de entrada e ~14,5 mil de saída (com raciocínio). O roteiro saiu com 2.111 palavras (alvo 1.500 a 2.250), 8 seções, 29 fontes distintas, nenhum id inválido, JSON válido de primeira, tom e pt-BR bons, rumores marcados como rumor.
   - **Achado principal: confiabilidade, não qualidade.** O `gemini-2.5-flash` não está disponível para contas novas (404). Em 2026-11-11, `gemini-3.8-flash` e `gemini-3.7-flash` não responderam nem a um "olá" em 100 s; `gemini-3.6-flash` e `gemini-3.5-flash` devolveram 503 ("alta demanda") em várias chamadas, e um dos roteiros falhou nas 4 tentativas. Com nova tentativa (espera de 15 s por tentativa) as execuções terminaram, mas a curadoria levou 16 a 45 s e o roteiro 59 s. Nenhum 429 apareceu. Ainda não há um modelo estável escolhido.
-- **Em andamento:** nada no código. D2: Thalita (edge-tts) escolhida, Piper de fallback, falta o ADR. O dono está lendo `spikes/out/script.txt` (roteiro da segunda rodada) para validar o tom. Limites do free tier: o painel do AI Studio só mostra uso (3.6 Flash: <50k entrada, <20k saída, 2 requisições), não cotas; registrado no `FEASIBILITY.md` como [H] com a evidência prática (sem 429). O dono acha que 1 episódio por semana cabe no free tier. Faltam os ADRs de D1, D2 e D6.
-- **Bloqueios:** nenhum. D1 a D7 ainda pendentes. Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
+- **Em andamento:** nada. Todos os itens da Fase 1 estão marcados; falta o dono aceitar a fase.
+- **Bloqueios:** nenhum. D3, D4, D5 e D7 seguem pendentes. Preferência do dono no canal (D3): gosta mais do Spotify, mas quer comparar com o Telegram antes de decidir.
 - **Decisões de sessão:**
   - O dono autorizou o agente a criar branches (commits e push continuam com o dono).
   - Gemini no spike: `httpx` direto, duas chamadas, os feeds da lista atual (ver abaixo). O SDK `google-genai` fica para a Fase 4, com ADR próprio.
@@ -21,22 +21,22 @@ Status: ⬜ não iniciada · 🔄 em andamento · ✅ concluída
   - O dono dispensou o teste com os modelos lite (`gemini-3.5-flash-lite`, `gemini-3.1-flash-lite`). Não repetir. A D1 segue aberta: só o `gemini-3.5-flash` foi avaliado de ponta a ponta; falta repetir em outro horário/dia para confirmar que os 503 foram pico passageiro. O roteiro do spike mencionou o lançamento do Gemini 4 Hydrogen, sucessor do 3.8 Flash (não verificado).
   - Para a Fase 3: cortar o resumo num tamanho fixo (Canaltech traz o texto inteiro); o limite de entrada do LLM é o gargalo.
 - **Observações para a Fase 4 (a decidir com o dono):** (1) a mistura pt/en ficou equilibrada com 9 BR e 9 estrangeiros, mas falta profundidade técnica (nenhuma pauta de dev/arquitetura); pedir 1 a 2 pautas técnicas e 1 a 2 de cultura/entretenimento tech por episódio, para um público da área sem ficar massante. (2) Na primeira rodada ela agrupou notícias muito diferentes numa pauta (GTA 6 e PS5). (3) O dono considera pautas como GTA 6 e o caso Nvidia interessantes e bem-vindas; manter a marcação de rumor como rumor e definir só uma regra editorial para vida pessoal. (4) O pipeline precisa de nova tentativa com espera e, talvez, um segundo modelo de reserva, dada a taxa de 503.
-- **Próximo passo:** o dono lê os ADRs 0002 a 0004 e os aprova (ou pede ajustes); aí o status vira "Aceito" e D1, D2 e D6 saem de "Decisões pendentes". Depois, aceite da Fase 1 e começo da Fase 2. Commit pendente na branch `fase-1-spikes`: `docs/adr/0002-*.md`, `0003-*.md`, `0004-*.md` e `docs/TASKS.md`.
+- **Próximo passo:** o dono aceita a Fase 1 (aceite: cada [H] crítico virou [C] ou foi corrigido; amostras ouvidas; ADRs do LLM e do TTS aprovados) e leva a branch `fase-1-spikes` à `main`. Depois, Fase 2 (modelo de dados e episódios), em branch nova. Commit pendente: `docs/adr/0002-*.md`, `0003-*.md`, `0004-*.md` (status) e `docs/TASKS.md`.
 
 ## Concluído
 
 - [x] Especificação inicial e análise de viabilidade (`docs/FEASIBILITY.md`)
 - [x] Documentos de base: `.claude/CLAUDE.md`, `docs/PROJECT.md`, `docs/TASKS.md`
 - [x] D8. Banco de dados: SQLite com SQLAlchemy e Alembic ([ADR 0001](adr/0001-banco-de-dados.md))
+- [x] D1. Provedor de LLM: Gemini Flash com modelo de reserva configurável ([ADR 0004](adr/0004-provedor-de-llm.md))
+- [x] D2. Provedor de TTS: edge-tts (Thalita) com Piper de fallback ([ADR 0002](adr/0002-provedor-de-tts.md))
+- [x] D6. Lista inicial de feeds: 18 feeds, 9 BR e 9 estrangeiros ([ADR 0003](adr/0003-lista-inicial-de-feeds.md))
 
 ## Decisões pendentes
 
-- [ ] D1. Provedor de LLM padrão. Sugestão: Gemini Flash (free tier), Groq como alternativa, Claude só manual e depois de medido. Necessária na Fase 4.
-- [ ] D2. Provedor de TTS. Sugestão: escolher pela audição dos testes da Fase 1; proposta inicial Google Chirp 3 HD com Piper de fallback. Necessária na Fase 5.
 - [ ] D3. Canal do MVP: Spotify (feed RSS) ou Telegram. Sugestão: Telegram primeiro (sem depender do deploy), RSS para o Spotify em seguida. Necessária na Fase 7.
 - [ ] D4. Quem pode pedir episódio manual (RF21): só o admin ou qualquer usuário. Sugestão: só o admin, para proteger cotas. Necessária na Fase 6.
 - [ ] D5. Dia e hora do episódio semanal. Sugestão: segunda-feira, 6h, `America/Sao_Paulo`. Necessária na Fase 6.
-- [ ] D6. Lista inicial de feeds RSS (pt-BR e inglês). Lista de 18 feeds (9 BR e 9 estrangeiros) definida em 2026-11-12 (ver "Estado atual"); falta escrever o ADR. Necessária na Fase 3.
 - [ ] D7. Cadastrar cartão no Google Cloud (TTS) e na Oracle (hospedagem). Sugestão: sim, com alerta de orçamento em US$ 1; se não, Piper/edge-tts e outra hospedagem. Necessária nas Fases 5 e 9.
 
 ## ✅ Fase 0: Fundação do projeto

@@ -1,6 +1,6 @@
 # 0003. Lista inicial de feeds RSS: 18 feeds, 9 brasileiros e 9 estrangeiros
 
-- **Status:** Proposto (aguardando a leitura do dono)
+- **Status:** Aceito
 - **Data:** 2026-11-17
 - **Decisão pendente resolvida:** D6
 

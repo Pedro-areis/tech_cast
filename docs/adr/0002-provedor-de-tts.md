@@ -1,6 +1,6 @@
 # 0002. Provedor de TTS: edge-tts (voz Thalita) com Piper de fallback
 
-- **Status:** Proposto (aguardando a leitura do dono)
+- **Status:** Aceito
 - **Data:** 2026-11-17
 - **Decisão pendente resolvida:** D2
 
